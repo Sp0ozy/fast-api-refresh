@@ -32,6 +32,7 @@ class UserRequest(BaseModel):
     last_name: str = Field(min_length=1)
     password: str = Field(min_length=1, max_length=100)
     role: str = Field(min_length=1)
+    phone_number: str = Field(min_length=1, max_length=20)
     
 class Token(BaseModel):
     access_token: str
@@ -81,7 +82,8 @@ def create_user(db: db_dependency, create_user_request: UserRequest):
         last_name = create_user_request.last_name,
         role = create_user_request.role,
         hashed_password = bcrypt_context.hash(create_user_request.password),
-        is_active = True
+        is_active = True,
+        phone_number = create_user_request.phone_number
     )
     db.add(create_user_model)
     db.commit()
