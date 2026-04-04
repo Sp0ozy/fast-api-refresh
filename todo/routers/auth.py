@@ -3,8 +3,9 @@ import os
 from dotenv import load_dotenv
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 from ..database import SessionLocal
 from sqlalchemy.orm import Session
@@ -46,6 +47,17 @@ def get_db():
         db.close() 
         
 db_dependency = Annotated[Session, Depends(get_db)]   
+
+templates = Jinja2Templates(directory="todo/templates")
+
+# Pages
+@router.get("/login-page", status_code=status.HTTP_200_OK)
+def render_login_page(request: Request):
+    return templates.TemplateResponse(request, "login.html")
+
+@router.get("/register-page", status_code=status.HTTP_200_OK)
+def render_login_page(request: Request):
+    return templates.TemplateResponse(request, "register.html")
 
 def authenticate_user(username: str, password: str, db):
     user=db.query(Users).filter(Users.username == username).first()
